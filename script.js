@@ -1,9 +1,16 @@
 /* ==========================================================================
    A LETTER JUST FOR YOU — script.js
-   Vanilla JS only. Organized into small, focused functions.
+   Vanilla JS only. Organized into small, focused sections.
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  /* ------------------------------------------------------------------ *
+   * Small shared helper
+   * ------------------------------------------------------------------ */
+  function randomBetween(min, max) {
+    return Math.random() * (max - min) + min;
+  }
 
   /* ------------------------------------------------------------------ *
    * 0. LOADING SCREEN
@@ -12,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('load', () => {
     setTimeout(() => loadingScreen.classList.add('hidden'), 1200);
   });
-  // Fallback in case 'load' already fired before listener attached
+  // Fallback in case 'load' already fired before this listener attached
   setTimeout(() => loadingScreen.classList.add('hidden'), 2500);
 
   /* ------------------------------------------------------------------ *
@@ -26,21 +33,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const HEART_GLYPHS = ['❤', '💕', '💗', '💖'];
   const FLOWER_GLYPHS = ['🌸', '🌷', '🌺'];
-  const BUTTERFLY_GLYPHS = ['🦋'];
-
-  function randomBetween(min, max) {
-    return Math.random() * (max - min) + min;
-  }
 
   // Floating hearts rising slowly from the bottom
   function spawnHeart() {
     const el = document.createElement('span');
     el.className = 'floating-heart';
     el.textContent = HEART_GLYPHS[Math.floor(Math.random() * HEART_GLYPHS.length)];
-    const size = randomBetween(14, 30);
     el.style.left = randomBetween(0, 100) + 'vw';
     el.style.bottom = '-5vh';
-    el.style.fontSize = size + 'px';
+    el.style.fontSize = randomBetween(14, 30) + 'px';
     const duration = randomBetween(10, 18);
     el.style.animationDuration = duration + 's';
     heartsLayer.appendChild(el);
@@ -48,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Tiny twinkling stars scattered across the sky
-  function spawnStar() {
+  function spawnStar(autoRemove) {
     const el = document.createElement('span');
     el.className = 'floating-star';
     el.textContent = '✦';
@@ -57,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     el.style.fontSize = randomBetween(6, 12) + 'px';
     el.style.animationDuration = randomBetween(2, 5) + 's';
     starsLayer.appendChild(el);
+    if (autoRemove) setTimeout(() => el.remove(), 4000);
   }
 
   // Small glowing particles drifting gently
@@ -90,22 +92,25 @@ document.addEventListener('DOMContentLoaded', () => {
   function spawnButterfly() {
     const el = document.createElement('span');
     el.className = 'floating-butterfly';
-    el.textContent = BUTTERFLY_GLYPHS[0];
+    el.textContent = '🦋';
     el.style.left = randomBetween(5, 95) + 'vw';
     el.style.top = randomBetween(10, 80) + 'vh';
     el.style.fontSize = randomBetween(18, 26) + 'px';
     el.style.animationDuration = randomBetween(5, 8) + 's';
     el.style.opacity = '0';
     butterfliesLayer.appendChild(el);
-    requestAnimationFrame(() => { el.style.transition = 'opacity 1s ease'; el.style.opacity = '0.8'; });
+    requestAnimationFrame(() => {
+      el.style.transition = 'opacity 1s ease';
+      el.style.opacity = '0.8';
+    });
     setTimeout(() => {
       el.style.opacity = '0';
       setTimeout(() => el.remove(), 1000);
     }, 6000);
   }
 
-  // Seed initial stars & particles, then keep the scene alive on intervals
-  for (let i = 0; i < 40; i++) spawnStar();
+  // Seed the initial sky, then keep the scene alive on gentle intervals
+  for (let i = 0; i < 40; i++) spawnStar(false);
   for (let i = 0; i < 18; i++) spawnParticle();
 
   setInterval(spawnHeart, 1400);
@@ -117,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * ------------------------------------------------------------------ */
   const cursorTrail = document.getElementById('cursor-trail');
   let lastTrailTime = 0;
+
   window.addEventListener('mousemove', (e) => {
     const now = Date.now();
     if (now - lastTrailTime < 60) return; // throttle for performance
@@ -134,10 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
    * 3. RIPPLE EFFECT FOR BUTTONS
    * ------------------------------------------------------------------ */
   function attachRipple(button) {
-    button.addEventListener('click', function (e) {
+    button.addEventListener('click', (e) => {
       const rect = button.getBoundingClientRect();
-      const circle = document.createElement('span');
       const size = Math.max(rect.width, rect.height);
+      const circle = document.createElement('span');
       circle.className = 'ripple-circle';
       circle.style.width = circle.style.height = size + 'px';
       circle.style.left = (e.clientX - rect.left - size / 2) + 'px';
@@ -159,22 +165,21 @@ document.addEventListener('DOMContentLoaded', () => {
   musicToggle.addEventListener('click', () => {
     if (!musicPlaying) {
       bgMusic.play().catch(() => {
-        // No audio file provided / autoplay blocked — fail silently.
+        // No audio file provided, or autoplay blocked — fail silently.
         // Drop a "song.mp3" file next to index.html to enable real playback.
       });
       musicIcon.textContent = '🎶';
       musicToggle.classList.add('playing');
-      musicPlaying = true;
     } else {
       bgMusic.pause();
       musicIcon.textContent = '🎵';
       musicToggle.classList.remove('playing');
-      musicPlaying = false;
     }
+    musicPlaying = !musicPlaying;
   });
 
   /* ------------------------------------------------------------------ *
-   * 5. SCREEN NAVIGATION HELPERS
+   * 5. SCREEN NAVIGATION
    * ------------------------------------------------------------------ */
   const screens = {
     landing: document.getElementById('screen-landing'),
@@ -193,13 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
    * ------------------------------------------------------------------ */
   const envelope = document.getElementById('envelope');
   const landingScreen = screens.landing;
-
-  const LOVE_LETTER_TEXT =
-    "From the very first time we talked, something about you felt like home. " +
-    "You turned ordinary days into memories I never want to forget, and your smile " +
-    "somehow makes even the hardest days feel a little softer. I have imagined a " +
-    "thousand futures, and in every single one, you are there beside me.";
-
   let hasOpened = false;
 
   function openEnvelope() {
@@ -209,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     envelope.classList.add('opened');
     landingScreen.classList.add('blurred');
 
-    // give the flap-opening animation a moment to play, then transition screens
+    // let the flap-opening animation play, then transition to the letter
     setTimeout(() => {
       landingScreen.classList.remove('blurred');
       goToScreen('letter');
@@ -226,6 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
    * 7. TYPING ANIMATION FOR THE LETTER
    * ------------------------------------------------------------------ */
   const letterTyped = document.getElementById('letter-typed');
+
+  const LOVE_LETTER_TEXT =
+    "From the very first time we talked, something about you felt like home. " +
+    "You turned ordinary days into memories I never want to forget, and your smile " +
+    "somehow makes even the hardest days feel a little softer. I have imagined a " +
+    "thousand futures, and in every single one, you are there beside me.";
 
   function typeLetter() {
     letterTyped.textContent = '';
@@ -258,10 +262,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ------------------------------------------------------------------ *
    * 9. THE NEVER-CLICKABLE "NO" BUTTON
+   *
+   *    Behavior:
+   *    - It sits calmly next to YES until she moves toward it.
+   *    - If the cursor/touch gets close, it slides away smoothly (a dodge).
+   *    - The MOMENT she actually tries to click/tap it, it disappears
+   *      (fades + shrinks out), a new random safe spot is picked, and it
+   *      reappears there (fades + grows back in) — with a funny message.
+   *    - This disappear → reappear cycle repeats every single time,
+   *      forever. It can never actually be pressed. Only YES works.
    * ------------------------------------------------------------------ */
   const noBtn = document.getElementById('no-btn');
   const yesBtn = document.getElementById('yes-btn');
-  const buttonRow = document.getElementById('screen-proposal').querySelector('.button-row');
   const noToast = document.getElementById('no-toast');
 
   const FUNNY_MESSAGES = [
@@ -274,21 +286,24 @@ document.addEventListener('DOMContentLoaded', () => {
     'The universe says YES 🌸',
   ];
 
-  const ESCAPE_RADIUS = 120; // px — how close the cursor can get before it flees
-  let noIsFixed = false;
+  const ESCAPE_RADIUS = 120; // px — how close the cursor can get before it dodges
+  let noIsFixed = false;     // becomes true once the button starts moving around
+  let isCycling = false;     // true while a disappear/reappear cycle is in progress
 
+  // Picks a random position inside the viewport that never overlaps YES
+  // and never lets the button fall off-screen.
   function getSafeRandomPosition() {
     const margin = 24;
     const btnRect = noBtn.getBoundingClientRect();
     const yesRect = yesBtn.getBoundingClientRect();
 
-    const maxX = window.innerWidth - btnRect.width - margin;
-    const maxY = window.innerHeight - btnRect.height - margin;
+    const maxX = Math.max(margin, window.innerWidth - btnRect.width - margin);
+    const maxY = Math.max(margin, window.innerHeight - btnRect.height - margin);
 
     let x, y, overlapsYes, tries = 0;
     do {
-      x = randomBetween(margin, Math.max(margin, maxX));
-      y = randomBetween(margin, Math.max(margin, maxY));
+      x = randomBetween(margin, maxX);
+      y = randomBetween(margin, maxY);
       overlapsYes = (
         x < yesRect.right + 20 &&
         x + btnRect.width > yesRect.left - 20 &&
@@ -318,9 +333,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => noToast.classList.remove('show'), 1200);
   }
 
-  // Track the cursor; if it gets too close to the NO button, make it flee.
+  // The dodge: cursor gets close → button slides away smoothly (no fading).
   document.addEventListener('mousemove', (e) => {
     if (!screens.proposal.classList.contains('active')) return;
+    if (isCycling) return;
     const rect = noBtn.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -330,34 +346,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Also flee from touch input, since hover-based escape doesn't exist on mobile
-  document.addEventListener('touchstart', (e) => {
-    if (!screens.proposal.classList.contains('active')) return;
-    const touch = e.touches[0];
-    if (!touch) return;
-    const rect = noBtn.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const dist = Math.hypot(touch.clientX - centerX, touch.clientY - centerY);
-    if (dist < ESCAPE_RADIUS * 1.4) {
-      moveNoButton();
-    }
-  }, { passive: true });
+  // The real cycle: triggered the instant she tries to click or tap it.
+  // pointerdown fires before a click can finish, so it's already gone by
+  // the time she "lands" on it — this covers mouse, touch, and pen input.
+  function vanishAndReappear() {
+    if (isCycling) return;
+    isCycling = true;
 
-  // In the rare case it IS clicked: show a funny message, then it disappears
-  // and reappears somewhere else — it can never actually be "accepted".
-  noBtn.addEventListener('click', (e) => {
-    e.preventDefault();
     showFunnyToast();
-    noBtn.style.transition = 'opacity 0.25s ease, left 0.35s cubic-bezier(0.34,1.56,0.64,1), top 0.35s cubic-bezier(0.34,1.56,0.64,1)';
-    noBtn.style.opacity = '0';
+    noBtn.classList.add('vanishing'); // fade + shrink out
+
     setTimeout(() => {
-      moveNoButton();
-      noBtn.style.opacity = '1';
-    }, 250);
+      moveNoButton();                        // pick a new safe spot while invisible
+      noBtn.classList.remove('vanishing');   // fade + grow back in there
+      isCycling = false;
+    }, 320);
+  }
+
+  noBtn.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    vanishAndReappear();
   });
 
-  // Reposition safely if the window resizes, so it never ends up off-screen
+  // Safety net for browsers/devices where a click still slips through.
+  noBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!isCycling) vanishAndReappear();
+  });
+
+  // Keep it safely on-screen and clear of YES if the window is resized.
   window.addEventListener('resize', () => {
     if (noIsFixed) moveNoButton();
   });
@@ -505,17 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     for (let i = 0; i < 20; i++) {
-      setTimeout(() => {
-        const el = document.createElement('span');
-        el.className = 'floating-star';
-        el.textContent = '✦';
-        el.style.left = randomBetween(0, 100) + 'vw';
-        el.style.top = randomBetween(0, 100) + 'vh';
-        el.style.fontSize = randomBetween(10, 18) + 'px';
-        el.style.animationDuration = randomBetween(1.5, 3) + 's';
-        starsLayer.appendChild(el);
-        setTimeout(() => el.remove(), 4000);
-      }, i * 60);
+      setTimeout(() => spawnStar(true), i * 60);
     }
   }
 
