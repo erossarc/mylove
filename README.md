@@ -15,8 +15,13 @@ A single-page romantic proposal website. Pure HTML, CSS, and vanilla JavaScript 
 4. Under "Build and deployment", set **Source** to `Deploy from a branch`, branch `main`, folder `/ (root)`.
 5. Save. Your site will be live at `https://<your-username>.github.io/<repo-name>/` within a minute or two.
 
+## How the NO button works
+- If the cursor (or a touch) gets close, it slides away smoothly — just a dodge.
+- The instant she actually tries to click or tap it, it disappears (fades + shrinks out), a new random spot is picked that never overlaps YES and never goes off-screen, and it reappears there (fades + grows back in) with a funny message.
+- This disappear → reappear cycle repeats every single time, forever. It can never actually be pressed — only YES works.
+
 ## Customizing
-- **The letter text**: edit the `LOVE_LETTER_TEXT` string near the top of `script.js`.
+- **The letter text**: edit the `LOVE_LETTER_TEXT` string in `script.js`.
 - **Colors**: edit the CSS variables at the top of `style.css` (`--blush`, `--lavender`, `--white`, `--rose-gold`).
 - **Funny "NO" messages**: edit the `FUNNY_MESSAGES` array in `script.js`.
 - **Fonts**: swap the Google Fonts link in `index.html` and update `--font-heading` / `--font-body` in `style.css`.
