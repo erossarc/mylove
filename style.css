@@ -516,15 +516,28 @@ body::before {
 #no-btn {
   transition: left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
               top 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-              transform 0.25s ease;
+              opacity 0.28s ease,
+              transform 0.28s ease;
   z-index: 50;
+  opacity: 1;
+  transform: scale(1);
 }
 #no-btn.escaping {
   position: fixed;
 }
 
+/* Disappear/reappear cycle: JS adds this class the instant she tries to
+   click, so the button fades + shrinks out — then JS moves it to a new
+   safe random spot and removes the class, so it fades + grows back in
+   there. This repeats every single time, forever, until YES is clicked. */
+#no-btn.vanishing {
+  opacity: 0;
+  transform: scale(0.3) rotate(25deg);
+  pointer-events: none;
+}
+
 /* ==========================================================================
-   Funny message toast (shown briefly when NO is somehow clicked)
+   Funny message toast (shown briefly every time the NO button escapes)
    ========================================================================== */
 .no-toast {
   position: fixed;
