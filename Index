@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A Letter Just For You 💌</title>
+
+<!-- Google Fonts: handwritten heading font + clean body font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ LOADING SCREEN ============ -->
+  <div id="loading-screen">
+    <div class="loading-heart">❤️</div>
+    <p class="loading-text">loading a little bit of love...</p>
+  </div>
+
+  <!-- ============ BACKGROUND LAYERS ============ -->
+  <!-- Soft animated gradient lives purely in CSS on body::before -->
+  <div id="bg-hearts" class="bg-layer" aria-hidden="true"></div>
+  <div id="bg-stars" class="bg-layer" aria-hidden="true"></div>
+  <div id="bg-particles" class="bg-layer" aria-hidden="true"></div>
+  <div id="bg-flowers" class="bg-layer" aria-hidden="true"></div>
+  <div id="bg-butterflies" class="bg-layer" aria-hidden="true"></div>
+
+  <!-- Confetti + ribbons canvas for the celebration -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Heart cursor trail container -->
+  <div id="cursor-trail" aria-hidden="true"></div>
+
+  <!-- ============ MUSIC TOGGLE ============ -->
+  <button id="music-toggle" title="Toggle romantic music" aria-label="Toggle background music">
+    <span id="music-icon">🎵</span>
+  </button>
+  <!-- Optional background music. Drop a file named "song.mp3" next to these files to enable it. -->
+  <audio id="bg-music" loop preload="none">
+    <source src="song.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- ============ MAIN APP WRAPPER ============ -->
+  <main id="app">
+
+    <!-- ---------- SCREEN 1 : LANDING / ENVELOPE ---------- -->
+    <section id="screen-landing" class="screen active">
+      <p class="eyebrow">💌 A Letter Just For You</p>
+
+      <div id="envelope" class="envelope" role="button" tabindex="0" aria-label="Open the letter">
+        <div class="envelope-shadow"></div>
+        <div class="envelope-body">
+          <div class="envelope-flap"></div>
+          <div class="envelope-front"></div>
+          <div class="envelope-seal">❤</div>
+          <div class="letter-peek"></div>
+        </div>
+        <div class="sparkle s1">✦</div>
+        <div class="sparkle s2">✧</div>
+        <div class="sparkle s3">✦</div>
+      </div>
+
+      <p class="tap-hint">Tap the letter ❤️</p>
+    </section>
+
+    <!-- ---------- SCREEN 2 : LOVE LETTER ---------- -->
+    <section id="screen-letter" class="screen">
+      <div class="letter-card glass">
+        <div class="letter-card-inner">
+          <p class="letter-heading">My Dearest,</p>
+          <p id="letter-typed" class="letter-body"></p>
+          <p class="letter-question heartbeat">"I have one question for you..."</p>
+        </div>
+      </div>
+      <button id="continue-btn" class="btn btn-primary ripple">❤️ Continue</button>
+    </section>
+
+    <!-- ---------- SCREEN 3 : PROPOSAL ---------- -->
+    <section id="screen-proposal" class="screen">
+      <div class="proposal-card glass">
+        <p class="proposal-line-1">If I propose to you...</p>
+        <p class="proposal-line-2 heartbeat">What would your answer be?</p>
+
+        <div class="button-row">
+          <button id="yes-btn" class="btn btn-primary ripple">💖 YES</button>
+          <button id="no-btn" class="btn btn-secondary ripple">🤍 NO</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- SCREEN 4 : FINAL CELEBRATION ---------- -->
+    <section id="screen-celebration" class="screen">
+      <div class="celebration-content">
+        <h1 class="celebration-title heartbeat">❤️ She Said YES ❤️</h1>
+        <div class="big-heart">❤</div>
+        <p class="forever-line">I love you forever.</p>
+        <p class="thank-you-line">Thank you for making my world beautiful.</p>
+
+        <div id="our-story" class="our-story glass">
+          <p class="story-heading">Our Story Begins</p>
+          <p class="story-sub">and this is only the first page...</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ YES POPUP ============ -->
+  <div id="yes-popup" class="popup-overlay">
+    <div class="popup-card glass">
+      <p class="popup-text">You just made me the happiest person alive ❤️</p>
+    </div>
+  </div>
+
+  <!-- ============ FUNNY MESSAGE TOAST (for NO button) ============ -->
+  <div id="no-toast" class="no-toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
